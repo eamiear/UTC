@@ -1,0 +1,29 @@
+.main-header {
+  //Logo bar
+  .logo {
+    font-family: "microsoft yahei", Helvetica, Arial, sans-serif;
+    display: table;
+
+    .logo-lg {
+      display: block;
+    }
+    .logo-mini {
+      display: none;
+    }
+    .logo-image,.logo-label{
+      display: table-cell;
+      vertical-align: middle;
+    }
+    .logo-image {
+    }
+    .logo-label{
+
+    }
+    img{
+      display: table-cell;
+    }
+  }
+}
+.skin-blue .wrapper{
+  background: transparent;
+}

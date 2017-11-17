@@ -1,0 +1,9 @@
+/**  */
+.link-type, .link-type:focus {
+  color: #337ab7;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.link-type.clean, .link-type.clean:focus{
+  text-decoration: none;
+}

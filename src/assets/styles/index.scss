@@ -1,0 +1,20 @@
+@import "mui";
+@import "sui/utopa";
+@import "theme/utop";
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+// display scrollbar
+*::-webkit-scrollbar {display:none}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all .2s ease
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
