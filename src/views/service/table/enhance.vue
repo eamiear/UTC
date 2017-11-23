@@ -188,6 +188,9 @@
         tableData: [],
         columns: [
           {
+            type: 'selection'
+          },
+          {
             label: '产品名称',
             align: 'left',
             template: function (row) {

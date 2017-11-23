@@ -79,7 +79,12 @@ export const constantRouterMap = [
       { name: '基础表格', path: 'base', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/base') },
       { name: '通用表格', path: 'universal', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/universal') },
       { name: '加强版', path: 'enhance', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/enhance') },
-      { name: '新增记录', path: 'addRecord', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/addRecord') }
+      { name: '新增记录', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') },
+      { name: '可拖拽表格', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') },
+      { name: '可编辑表格', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') },
+      { name: '可搜索表格', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') },
+      { name: '导出表格数据', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') },
+      { name: '表格转图片', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') }
     ]
   }
 ]
