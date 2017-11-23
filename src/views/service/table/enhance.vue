@@ -38,7 +38,9 @@
                       @focus="chooseMalls"></el-input>
           </el-form-item>
           <el-form-item label="模块样式">
-            <el-input style="width: 200px;" class="filter-item" placeholder="模块样式" v-model="listQuery.moduleStyle"></el-input>
+            <el-input style="width: 200px;" class="filter-item" placeholder="模块样式"
+                      v-model="listQuery.moduleStyle"
+                      @focus="chooseStyles"></el-input>
           </el-form-item>
           <el-button class="filter-item" type="primary" icon="search" @click="handleFilter">查询</el-button>
           <router-link :to="{path: '/service/table/addRecord'}">
@@ -121,6 +123,17 @@
     </el-dialog>
     <!-- malls creating dialog end -->
 
+    <!-- style selected dialog start -->
+    <el-dialog title="选择样式" size="small" :visible.sync="styleDialogVisible" :close-on-click-modal="false">
+      <!-- pick message from table -->
+      <u-table :data="styleList" :columns="styleColumn" :height="350" @table-selection="getSelectionList"></u-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="styleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="doSelectStyle">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- style selected dialog end -->
+
     <!-- preview paragraph  start -->
     <el-dialog title="" size="full" class="preview-dialog" :visible.sync="previewDialogVisible">
       <u-preview :magazineId="previewMagazineId" :key="previewKey"></u-preview>
@@ -149,12 +162,16 @@
       background: rgba(0, 0, 0, 0.9);
     }
   }
+  .text-decoration{
+    color: #999;
+    text-decoration: underline;
+  }
 </style>
 <script>
   import uTable from '@/components/table/uTable'
   import * as configModule from '@/api/basic/configure/module'
   import { deleteSpicyLeader } from '@/api/merchants/spicyleader'
-  import { fetchMallsList, createMall } from '@/api/malls'
+  import { fetchMallsList, createMall, fetchStyleList } from '@/api/malls'
   import { fetchClientTypes } from '@/api/common/platform'
   import { EXCEPTION_STATUS_DESC_MAP, PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
   import { Utopa } from '@/common/utopa'
@@ -172,7 +189,10 @@
         columns: [
           {
             label: '产品名称',
-            prop: 'productName',
+            align: 'left',
+            template: function (row) {
+              return '<a class="link"><i class="el-icon-fa-adjust" style="margin-right: 5px; color: #777777;"></i>' + row.productName + '</a>'
+            },
             width: 150
           },
           {
@@ -186,7 +206,9 @@
           },
           {
             label: '模块名称',
-            prop: 'moduleName'
+            prop: 'moduleName',
+            showOverflowTooltip: true,
+            className: 'text-decoration'
           },
           {
             label: '模块编号',
@@ -204,12 +226,28 @@
             label: '是否显示',
             prop: 'isShow',
             formatter: function (row, column, cellValue) {
-              return cellValue
+              return cellValue ? '是' : '否'
             }
           },
+//          {
+//            label: '审核',
+//            prop: 'isAudit',
+//            template: function (row, that) {
+//              const type = {
+//                0: 'gray',
+//                1: 'primary'
+//              }
+//              const label = {
+//                0: '未通过',
+//                1: '通过'
+//              }
+//              return '<el-tag type="' + type[row.isAudit] + '">' + label[row.isAudit] + '</el-tag>'
+//            }
+//          },
           {
             label: '更新时间',
-            prop: 'updateTime'
+            prop: 'updateTime',
+            sortable: true
           },
           {
             label: '更新人',
@@ -217,7 +255,6 @@
           },
           {
             label: '操作',
-            width: 300,
             operations: [
               {
                 label: '预览',
@@ -242,6 +279,7 @@
           mallName: '',
           moduleName: '',
           updateTime: '',
+          moduleStyle: '',
           status: undefined,
           pageNo: PAGINATION_PAGENO,                // 页码
           pageSize: PAGINATION_PAGESIZE              // 页数
@@ -283,6 +321,28 @@
           themes: [],
           rate: 2.5
         },
+        // --------- styles about -----------------
+        styleDialogVisible: false,
+        styleList: [],
+        selectionList: [],
+        styleColumn: [
+          {
+            type: 'selection'
+          },
+          {
+            label: '#',
+            prop: 'id',
+            width: 150
+          },
+          {
+            label: '样式名称',
+            prop: 'name'
+          },
+          {
+            label: '样式内容',
+            prop: 'content'
+          }
+        ],
         // ------------ preview dialog -------------------
         previewDialogVisible: false,
         previewModel: {},
@@ -371,6 +431,7 @@
           mallName: '',
           moduleName: '',
           updateTime: '',
+          moduleStyle: '',
           status: undefined,
           pageNo: PAGINATION_PAGENO,                // 页码
           pageSize: PAGINATION_PAGESIZE
@@ -473,6 +534,30 @@
       handleMallCurrentChange (pageNo) {
         this.mallQuery.pageNo = pageNo
         this.getMallsList()
+      },
+      // ---------- style about ------------------------
+      doSelectStyle () {
+        this.styleDialogVisible = false
+        this.listQuery.moduleStyle = this.selectionList.map((item, key) => {
+          return item.name
+        }).join(',')
+      },
+      getSelectionList (val) {
+        this.selectionList = val
+      },
+      chooseStyles () {
+        this.styleDialogVisible = true
+        this.getStyleList()
+      },
+      getStyleList () {
+        fetchStyleList().then(response => {
+          const result = response.data
+          if (Utopa.isValidRequest(response)) {
+            this.styleList = result.data.infos
+          } else {
+            error(EXCEPTION_STATUS_DESC_MAP[result.code] || '获取失败')
+          }
+        })
       }
     }
   }

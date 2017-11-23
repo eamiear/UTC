@@ -20,3 +20,9 @@ export function createMall () {
   })
 }
 
+export function fetchStyleList () {
+  return request.post({
+    url: '/malls/style/list'
+  })
+}
+
