@@ -7,6 +7,8 @@
             <slot name="table-filter"></slot>
         </div>
         <el-table
+                :ref="refs"
+                :id="tid"
                 :data="data"
                 border fit
                 highlight-current-row
@@ -28,7 +30,8 @@
                                    :key="key" :size="operate.size || 'small'"
                                    :type="operate.type || 'danger'"
                                    @click="handleClick (operate, scope.row)">
-                            {{operate.label}}
+                          <span v-if="operate.template" v-html="operate.template.call(null, scope.row)"></span>
+                          <span v-else>{{operate.label}}</span>
                         </el-button>
                     </template>
                 </el-table-column>
@@ -68,14 +71,29 @@
                 </el-table-column>
             </template>
         </el-table>
-        <div class="pagination-container">
-            <slot name="pagination"></slot>
-        </div>
+        <el-col :span="24" class="toolbar">
+            <div class="toobar-action-wrapper pull-left">
+                <slot name="toobar-action"></slot>
+            </div>
+            <div class="pagination-container">
+                <slot name="pagination"></slot>
+            </div>
+        </el-col>
+
     </div>
 </template>
 
 <style rel="stylesheet/scss" lang="scss">
+  .utopa-table-container {
+    .toolbar {
+      margin-top: 5px;
+      padding: 0;
+      border:none;
+      .pagination-container {
 
+      }
+    }
+  }
 </style>
 
 <script>
@@ -87,6 +105,11 @@
       }
     },
     props: {
+      refs: {
+        type: String,
+        default: 'uTableRef'
+      },
+      tid: String,
       'data': {
         type: Array,
         default: []
@@ -110,7 +133,7 @@
       },
       handleSelectionChange (val) {
         this.multipleSelection = val
-        this.$emit('table-selection', val)
+        this.$emit('selection-change', val)
       },
       handleClick (operation, row) {
         if (operation) {

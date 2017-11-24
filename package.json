@@ -26,6 +26,7 @@
     "mockjs": "1.0.1-beta3",
     "moment": "^2.19.1",
     "nprogress": "0.2.0",
+    "sortablejs": "^1.7.0",
     "tinymce": "^4.7.1",
     "vue": "^2.5.3",
     "vue-i18n": "^6.1.3",

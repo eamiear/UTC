@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <!-- product table list start -->
-    <u-table :data="tableData" :columns="columns" :height="utopaTableHeight">
+    <u-table :data="tableData" :columns="columns" :height="utopaTableHeight" @selection-change="selsChange">
       <div slot="filter">
-        <el-form autoComplete="on" :model="listQuery" label-position="left" :inline="true">
+        <el-form autoComplete="on" :model="listQuery"  label-position="left" :inline="true">
           <el-form-item label="品牌类型">
             <el-select clearable class="filter-item" placeholder="" v-model="listQuery.brandId" @visible-change="fetchBrandList">
               <el-option label="全部" value=""></el-option>
@@ -51,6 +51,8 @@
           <el-button class="filter-item" type="primary" icon="refresh" @click="handleRefresh">刷新</el-button>
         </el-form>
       </div>
+
+      <el-button slot="toobar-action" type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
       <div slot="pagination" style="text-align: right">
         <el-pagination
           @size-change="handleSizeChange"
@@ -126,7 +128,7 @@
     <!-- style selected dialog start -->
     <el-dialog title="选择样式" size="small" :visible.sync="styleDialogVisible" :close-on-click-modal="false">
       <!-- pick message from table -->
-      <u-table :data="styleList" :columns="styleColumn" :height="350" @table-selection="getSelectionList"></u-table>
+      <u-table :data="styleList" :columns="styleColumn" :height="350" @selection-change="getSelectionList"></u-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="styleDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="doSelectStyle">确 定</el-button>
@@ -152,9 +154,6 @@
     .utopa-table-container{
       width: 100%;
       margin-top: 10px;
-    }
-    .pagination-container{
-      margin-top: 5px;
     }
   }
   .preview-dialog{
@@ -185,6 +184,7 @@
       return {
         total: 0,
         utopaTableHeight: 0,
+        sels: [],
         tableData: [],
         columns: [
           {
@@ -204,7 +204,7 @@
             width: 180,
             style: {'color': 'rgba(17, 17, 212, 0.9);'},
             formatter: function (row, column, cellValue) {
-              return cellValue.length > 14 ? cellValue.slice(0, 14) + '...' : cellValue
+              return cellValue.length > 10 ? cellValue.slice(0, 9) + '...' : cellValue
             }
           },
           {
@@ -491,6 +491,24 @@
       handleCurrentChange (pageNo) {
         this.listQuery.pageNo = pageNo
         this.getList()
+      },
+      selsChange: function (sels) {
+        this.sels = sels
+      },
+      batchRemove () {
+        const ids = this.sels.map(item => item.id).toString()
+        this.$confirm('确认删除选中记录吗？', '提示', {
+          type: 'warning'
+        }).then(() => {
+          this.listLoading = true
+          let para = { ids: ids }
+          configModule.batchRemove(para).then((res) => {
+            this.listLoading = false
+            success('删除成功')
+            this.getList()
+          })
+        }).catch(() => {
+        })
       },
       // ------------- mall's query about ------------------
       getMallsList () {

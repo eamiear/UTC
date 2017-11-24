@@ -80,11 +80,11 @@ export const constantRouterMap = [
       { name: '通用表格', path: 'universal', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/universal') },
       { name: '加强版', path: 'enhance', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/enhance') },
       { name: '新增记录', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') },
-      { name: '可拖拽表格', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') },
-      { name: '可编辑表格', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') },
-      { name: '可搜索表格', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') },
-      { name: '导出表格数据', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') },
-      { name: '表格转图片', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') }
+      { name: '可拖拽表格', path: 'dragable-table', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/dragable-table') },
+      { name: '可编辑表格', path: 'editable-table', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/editable-table') },
+      { name: '可搜索表格', path: 'searchable-table', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/searchable-table') },
+      { name: '导出表格数据', path: 'exportable-table', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/exportable-table') },
+      { name: '表格转图片', path: 'table-to-image', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/table-to-image') }
     ]
   }
 ]

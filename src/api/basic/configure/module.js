@@ -24,3 +24,10 @@ export function fetchPageList () {
     url: '/configure/page/list'
   })
 }
+
+export function batchRemove (param) {
+  return request.post({
+    url: '/configure/batchRemove',
+    params: param
+  })
+}
