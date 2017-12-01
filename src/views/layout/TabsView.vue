@@ -1,14 +1,15 @@
 <template>
   <div class='tabs-view-container'>
-    <router-link class="tabs-view" v-for="tag in Array.from(visitedViews)" :to="tag.path" :key="tag.path">
+    <router-link class="tabs-view" v-for="tag in Array.from(visitedViews)" :to="generateVisitedPath(tag)" :key="tag.path">
       <el-tag :closable="true" :type="isActive(tag.path)?'primary':''" @close='closeViewTabs(tag,$event)'>
-        {{tag.name}}
+        {{tag.conf.tn || tag.name}}
       </el-tag>
     </router-link>
   </div>
 </template>
 
 <script>
+import assign from 'lodash.assign'
 export default {
   computed: {
     visitedViews () {
@@ -30,11 +31,17 @@ export default {
       $event.preventDefault()
     },
     generateRoute () {
+      let defaultQuery = {conf: {tn: '', imt: false}}
+      let query = assign({}, this.$route.query || {}, this.$route.params || {})
       if (this.$route.matched[this.$route.matched.length - 1].name) {
-        return this.$route.matched[this.$route.matched.length - 1]
+        let route = this.$route.matched[this.$route.matched.length - 1]
+        return assign(route, {conf: query.imt ? query : defaultQuery})
       }
       this.$route.matched[0].path = '/'
-      return this.$route.matched[0]
+      return assign(this.$route.matched[0], defaultQuery)
+    },
+    generateVisitedPath (tag) {
+      return !tag.conf.imt ? tag.path : {path: tag.path, query: {imt: tag.conf.imt, tn: tag.conf.tn}}
     },
     addViewTabs () {
       this.$store.dispatch('addVisitedViews', this.generateRoute())
@@ -44,7 +51,7 @@ export default {
     }
   },
   watch: {
-    $route () {
+    $route (to, from) {
       this.addViewTabs()
     }
   }

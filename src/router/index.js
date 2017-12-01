@@ -27,7 +27,10 @@ export const constantRouterMap = [
     redirect: '/dashboard',
     name: '首页',
     isShow: 0,
-    children: [{ path: 'dashboard', component: require('@/views/dashboard/index') }]
+    children: [
+      { path: 'dashboard', component: require('@/views/dashboard/index') },
+      { path: '/i18n', component: require('@/views/common/i18n') }
+    ]
   },
   {path: '', name: '组件列表', isHeader: true},
   {
@@ -80,11 +83,24 @@ export const constantRouterMap = [
       { name: '通用表格', path: 'universal', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/universal') },
       { name: '加强版', path: 'enhance', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/enhance') },
       { name: '新增记录', path: 'addRecord', icon: 'circle-o', isShow: 0, component: require('@/views/service/table/addRecord') },
+      { name: '详情', path: 'detail/:id', component: require('@/views/common/detail'), isShow: 0 },
       { name: '可拖拽表格', path: 'dragable-table', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/dragable-table') },
       { name: '可编辑表格', path: 'editable-table', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/editable-table') },
       { name: '可搜索表格', path: 'searchable-table', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/searchable-table') },
       { name: '导出表格数据', path: 'exportable-table', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/exportable-table') },
       { name: '表格转图片', path: 'table-to-image', icon: 'circle-o', isShow: 1, component: require('@/views/service/table/table-to-image') }
+    ]
+  },
+  {
+    path: '/service/others',
+    component: Layout,
+    isShow: 1,
+    icon: 'circle-o',
+    name: '其他',
+    redirect: 'dynamic-action',
+    children: [
+      { name: '动态操作', path: 'dynamic-action', icon: 'circle-o', isShow: 1, component: require('@/views/service/others/dynamic-action') },
+      { name: '动态事件', path: 'dynamic-event', icon: 'circle-o', isShow: 1, component: require('@/views/service/others/dynamic-event') }
     ]
   }
 ]

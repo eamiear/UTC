@@ -20,8 +20,11 @@ const app = {
       state.sidebar.opened = !state.sidebar.opened
     },
     ADD_VISITED_VIEWS: (state, view) => {
+      if (view.conf.imt) {
+        view.path = view.path.slice(0, view.path.lastIndexOf('/') + 1) + view.conf.id
+      }
       if (state.visitedViews.some(v => v.path === view.path)) return
-      state.visitedViews.push({ name: view.name, path: view.path })
+      state.visitedViews.push({ name: view.name, path: view.path, conf: view.conf })
     },
     DEL_VISITED_VIEWS: (state, view) => {
       let index
