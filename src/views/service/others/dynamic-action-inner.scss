@@ -1,0 +1,107 @@
+.app-container{
+  .filter-container{
+
+  }
+  .dynam-wrapper{
+    margin: 10px 0;
+  }
+  .toolbar{
+    padding: 10px 12px;
+  }
+}
+.dynam-wrapper {
+  .args-content,
+  .action-content{
+    min-height: 600px;
+    overflow: auto;
+  }
+  .service-args-wraper{
+    margin-top: 50px;
+  }
+  .args-header{
+    color: #999;
+    padding: 3px;
+  }
+  .args-list,
+  .sys-args-list{
+    border:1px solid #e7e7e7;
+    vertical-align: middle;
+  }
+  .sys-args-wraper {
+    margin-top: 50px;
+    .sys-args-list{
+      margin-top: 0;
+    }
+  }
+  .args-list .args-list-item,
+  .sys-args-list .args-list-item{
+    padding: 10px 12px;
+    border-bottom: 1px dashed #e6e6e6;
+    &:last-child{
+      border-bottom-color: transparent;
+    }
+    label{
+      margin: 0 5px 0 0;
+    }
+  }
+  .grid-header .grid-col{
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .header .grid-col:first-child{
+    border-right: 1px dashed #999;
+  }
+  .action-list{
+    .action-item {
+      padding: 10px 0;
+      position: relative;
+    }
+    .action-item .action-item-sl{
+      padding: 12px 0;
+      border-bottom:1px dashed #e7e7e7;
+
+      &:last-child{
+        border-bottom-color: transparent;
+      }
+    }
+    .action-item .action-plus{
+      position: absolute;
+      right: 15px;
+      top: 20px;
+    }
+    .action-item .action-minus,
+    .action-item .optbar{
+      display: inline-block;
+    }
+    .action-cond,.action-conf{
+      position: relative;
+
+      & .action-conf-item,
+      & .action-cond-item{
+        margin-top: 5px;
+      }
+    }
+    .action-conf .optbar{
+      margin-left: 5px;
+    }
+    .action-cond{
+      border-right: 1px dashed #e7e7e7;
+    }
+    .action-conf{
+
+    }
+  }
+}
+.anchor{
+  cursor: pointer;
+  color: #bdbdbd;
+}
+.scale2{
+  transform: scale(1.5);
+}
+.card-active{
+
+}
+.card-diable{
+
+}

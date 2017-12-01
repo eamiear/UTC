@@ -1,0 +1,94 @@
+.app-container{
+  .filter-container{
+
+  }
+  .dynam-wrapper{
+    margin: 10px 0;
+  }
+  .toolbar{
+    padding: 10px 12px;
+  }
+}
+
+.dynam-wrapper {
+  .args-content,
+  .action-content{
+    min-height: 600px;
+    overflow: auto;
+  }
+  .args-content {
+    .args-selector{
+
+    }
+    .args-list{
+      //padding:10px 12px;
+      border:1px solid #e7e7e7;
+      vertical-align: middle;
+    }
+  }
+  .args-list .args-list-item{
+    padding: 10px 12px;
+    border-bottom: 1px dashed #e6e6e6;
+
+    &:last-child{
+      border-bottom-color: transparent;
+    }
+
+    label{
+      margin: 0 5px 0 0;
+    }
+  }
+
+  .action-content{
+    .header {
+
+    }
+    .action-list{
+
+    }
+  }
+  .grid-header .grid-col{
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .header .grid-col:first-child{
+    border-right: 1px dashed #999;
+  }
+  .action-list{
+    .action-item {
+      padding: 10px 0;
+      position: relative;
+    }
+    .action-item .action-item-sl{
+      padding: 12px 0;
+      border-bottom:1px dashed #e7e7e7;
+
+      &:last-child{
+        border-bottom-color: transparent;
+      }
+    }
+    .action-item .action-plus{
+      position: absolute;
+      right: 15px;
+      top: 20px;
+    }
+    .action-item .action-minus{
+      position: absolute;
+      right: 104px;
+      top: 20px;
+    }
+    .action-cond{
+      border-right: 1px dashed #e7e7e7;
+    }
+    .action-conf{
+
+    }
+  }
+}
+.plus-anchor{
+  cursor: pointer;
+  color: #bdbdbd;
+}
+.scale2{
+  transform: scale(1.5);
+}
