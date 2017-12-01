@@ -1,0 +1,51 @@
+.app-container{
+  padding: 10px;
+  .filter-container{
+    .el-button{
+      margin-left: 10px;
+    }
+  }
+  .utopa-table-container{
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .thumbnail{
+    position: absolute;
+    display: none;
+    width: 400px;
+    height: 350px;
+    box-shadow: 0 1px 0 2px rgba(221, 221, 221, 0.61);
+    &.active{
+      display: block;
+    }
+    &.disactive{
+      display: none;
+    }
+    .thumbnail-header{
+      margin: 0;
+    }
+    .thumbnail-content{
+      padding: 10px 8px;
+      height: 100%;
+      text-align: center;
+      > img{
+        max-width: 100%;
+        max-height: 100%;
+        vertical-align: middle;
+      }
+    }
+    .thumbnail-footer {
+      margin: 0;
+    }
+  }
+}
+.preview-dialog{
+  .el-dialog--full {
+    background: rgba(0, 0, 0, 0.9);
+  }
+}
+.text-decoration{
+  color: #999;
+  text-decoration: underline;
+}

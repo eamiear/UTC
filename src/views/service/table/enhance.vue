@@ -1,7 +1,12 @@
 <template>
   <div class="app-container">
     <!-- product table list start -->
-    <u-table :data="tableData" :columns="columns" :height="utopaTableHeight" @selection-change="selsChange">
+    <u-table :data="tableData"
+             :columns="columns"
+             :height="utopaTableHeight"
+             @selection-change="selsChange"
+             @cell-mouse-enter="handleCellMouseEnter"
+             @cell-mouse-leave="handleCellMouseLeave">
       <div slot="filter">
         <el-form autoComplete="on" :model="listQuery"  label-position="left" :inline="true">
           <el-form-item label="品牌类型">
@@ -17,7 +22,13 @@
             <el-input style="width: 200px;" class="filter-item" placeholder="页面名称"  v-model="listQuery.pageName"></el-input>
           </el-form-item>
           <el-form-item label="模块名称">
-            <el-input style="width: 200px;" class="filter-item" placeholder="模块名称"  v-model="listQuery.moduleName"></el-input>
+            <!--<el-input style="width: 200px;" class="filter-item" placeholder="模块名称"  v-model="listQuery.moduleName"></el-input>-->
+            <el-autocomplete
+              v-model="listQuery.moduleName"
+              :fetch-suggestions="querySearchAsync"
+              placeholder="输入模块名称"
+              @select="handleSelectModuleName"
+            ></el-autocomplete>
           </el-form-item>
           <el-form-item label="更新时间">
             <el-date-picker
@@ -141,30 +152,20 @@
       <u-preview :magazineId="previewMagazineId" :key="previewKey"></u-preview>
     </el-dialog>
     <!-- preview paragraph end -->
+
+    <!-- thumbnail wrapper start -->
+    <div class="thumbnail" :class="{'active': isShowThumbnail, 'disactive': !isShowThumbnail}">
+      <p class="thumbnail-header"></p>
+      <div class="thumbnail-content">
+        <img v-if="thumbnailUrl" :src="thumbnailUrl" alt="thumbnail">
+      </div>
+      <div class="thumbnail-footer"></div>
+    </div>
+    <!-- thumbnail wrapper end-->
   </div>
 </template>
 <style lang="scss">
-  .app-container{
-    padding: 10px;
-    .filter-container{
-      .el-button{
-        margin-left: 10px;
-      }
-    }
-    .utopa-table-container{
-      width: 100%;
-      margin-top: 10px;
-    }
-  }
-  .preview-dialog{
-    .el-dialog--full {
-      background: rgba(0, 0, 0, 0.9);
-    }
-  }
-  .text-decoration{
-    color: #999;
-    text-decoration: underline;
-  }
+  @import "scss/enhance";
 </style>
 <script>
   import uTable from '@/components/table/uTable'
@@ -172,6 +173,7 @@
   import { deleteSpicyLeader } from '@/api/merchants/spicyleader'
   import { fetchMallsList, createMall, fetchStyleList } from '@/api/malls'
   import { fetchClientTypes } from '@/api/common/platform'
+  import { fetchModuleNames } from '@/api/services/table/enhance'
   import { EXCEPTION_STATUS_DESC_MAP, PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
   import { Utopa } from '@/common/utopa'
   import { success, error, info } from '@/utils/dialog'
@@ -181,10 +183,13 @@
   export default {
     name: 'base',
     data () {
+      const vm = this
       return {
         total: 0,
         utopaTableHeight: 0,
         sels: [],
+        moduleNamesSet: [],
+        moduleNameTimeout: null,
         tableData: [],
         columns: [
           {
@@ -196,7 +201,17 @@
             template: function (row) {
               return '<a class="link"><i class="el-icon-fa-adjust" style="margin-right: 5px; color: #777777;"></i>' + row.productName + '</a>'
             },
-            width: 150
+            width: 150,
+            func: function (row) {
+              vm.$router.push({path: '/service/table/detail/' + row.id, query: {imt: true, tn: row.productName}})
+            }
+          },
+          {
+            label: '缩略图',
+            align: 'center',
+            template: function (row) {
+              return '<a class="inline-block padding-small"><img class="image image-tiny" src="' + row.thumbnail + '" alt="thumbnail"/></a>'
+            }
           },
           {
             label: '页面名称',
@@ -353,7 +368,11 @@
         previewMagazineId: undefined,
         previewVoteId: undefined,
         // ------------- filter about ---------------------
-        brands: []
+        brands: [],
+        // ------------- thumbnails about ---------------
+        isShowThumbnail: false,
+        thumbnailUrl: '',
+        thumbnailEl: ''
       }
     },
     props: {},
@@ -366,13 +385,13 @@
       this.getList()
     },
     mounted () {
-      console.log(this.$t('lang.message.hello'))
       this.fixLayout()
       window.onresize = () => {
         return (() => {
           this.fixLayout()
         })()
       }
+      this.fetchModuleNames()
     },
     watch: {
       // reset the form's fields validation when dialog closed
@@ -395,7 +414,7 @@
         const crumbNav = document.querySelector('.breadcrumb-nav')
         const filterContainer = document.querySelector('.filter-container')
         let pagination = document.querySelector('.pagination-container')
-        this.utopaTableHeight = body.clientHeight - mainHeader.clientHeight * 2 - crumbNav.clientHeight - filterContainer.clientHeight - pagination.clientHeight - 10
+        this.utopaTableHeight = body.clientHeight - mainHeader.clientHeight * 2 - crumbNav.clientHeight - filterContainer.clientHeight - pagination.clientHeight - 20
       },
       // fetch product list form server
       getList () {
@@ -443,6 +462,27 @@
       handleFilter () {
         this.listQuery.pageNo = PAGINATION_PAGENO
         this.getList()
+      },
+      fetchModuleNames () {
+        fetchModuleNames().then(response => {
+          this.moduleNamesSet = response.data.data.records
+        })
+      },
+      querySearchAsync (queryString, cb) {
+        let moduleNamesSet = this.moduleNamesSet
+        const results = queryString ? moduleNamesSet.filter(this.createStateFilter(queryString)) : moduleNamesSet
+        clearTimeout(this.moduleNameTimeout)
+        this.moduleNameTimeout = setTimeout(() => {
+          cb(results)
+        }, 3000 * Math.random())
+      },
+      createStateFilter (queryString) {
+        return (state) => {
+          return (state.value.indexOf(queryString.toLowerCase()) === 0)
+        }
+      },
+      handleSelectModuleName (item) {
+        console.log('autocomplete moduleNames: ', item)
       },
       handleRefresh () {
         this.resetProductListQuery()
@@ -579,6 +619,25 @@
             error(EXCEPTION_STATUS_DESC_MAP[result.code] || '获取失败')
           }
         })
+      },
+      // thumbnails handler
+      handleCellMouseEnter (row, column, cell, event) {
+        if (!event.currentTarget.className.includes('el-table_1_column_3')) return
+        this.thumbnailEl = this.thumbnailEl || document.querySelector('.thumbnail')
+        const tableWrapHeight = event.fromElement.clientHeight
+        this.isShowThumbnail = true
+        this.thumbnailUrl = row.thumbnail
+        const thumbnailHeight = this.thumbnailEl.clientHeight
+        const offsetY = event.y + thumbnailHeight - tableWrapHeight > 0 ? event.y + (tableWrapHeight - thumbnailHeight) + cell.clientHeight / 2 : event.y - cell.clientHeight
+        this.thumbnailEl.style.left = (event.x + cell.clientWidth * 5 / 6) + 'px'
+        this.thumbnailEl.style.top = offsetY + 'px'
+      },
+      handleCellMouseLeave (row, column, cell, event) {
+        this.thumbnailEl = this.thumbnailEl || document.querySelector('.thumbnail')
+        this.isShowThumbnail = false
+        this.thumbnailUrl = ''
+//        this.thumbnailEl.style.left = ''
+//        this.thumbnailEl.style.top = ''
       }
     }
   }
