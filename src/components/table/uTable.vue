@@ -15,6 +15,8 @@
                 :height="height"
                 @row-click="handleRowClick"
                 @selection-change="handleSelectionChange"
+                @cell-mouse-enter="handleCellMouseEnter"
+                @cell-mouse-leave="handleCellMouseLeave"
                 style="width: 100%">
             <template v-for="column in columns">
                 <el-table-column
@@ -50,10 +52,9 @@
                         :className="column.className"
                         :sortable="column.sortable || false"
                         :show-overflow-tooltip="column.showOverflowTooltip || false"
-                        :formatter="column.formatter"
-                        @click="handleClick (operate, scope.row)">
+                        :formatter="column.formatter">
                     <template slot-scope="scope">
-                        <div v-html="column.template.call(null, scope.row)"></div>
+                        <div @click="handleClick (column.func, scope.row)" v-html="column.template.call(null, scope.row)"></div>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -65,8 +66,7 @@
                         :className="column.className"
                         :sortable="column.sortable || false"
                         :show-overflow-tooltip="column.showOverflowTooltip || false"
-                        :formatter="column.formatter"
-                        @click="handleClick (operate, scope.row)">
+                        :formatter="column.formatter">
 
                 </el-table-column>
             </template>
@@ -135,8 +135,16 @@
         this.multipleSelection = val
         this.$emit('selection-change', val)
       },
+      handleCellMouseEnter (row, column, cell, event) {
+        this.$emit('cell-mouse-enter', row, column, cell, event)
+      },
+      handleCellMouseLeave (row, column, cell, event) {
+        this.$emit('cell-mouse-leave', row, column, cell, event)
+      },
       handleClick (operation, row) {
-        if (operation) {
+        if (typeof operation === 'function') {
+          operation(row)
+        } else if (operation) {
           operation.func && operation.func.call(null, row, operation.funcArgs || {})
         }
       }
